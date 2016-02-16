@@ -14,6 +14,7 @@
 \usepackage{graphicx}
 \usepackage[english]{babel}
 \usepackage{float}
+\usepackage{import}
 \setcounter{tocdepth}{2}
 \lstset{language=c++}
 \lstset{basicstyle=\small}
@@ -45,7 +46,7 @@ Two different methods were implemented to solve the set of linear equations. One
 
 
 \section{Introduction}
-We begin with the Poisson's equation in three dimensions  with a known source. After some manipulation we get to look like a simple second order ordinary differential equation. The second derivative of the equation is approximated by the three point formula and we obtain a set of linear equations. We put them in matrix form which give us the equation  $\ {\bf A}{\bf v} = \tilde{{\bf b}}$. By writing it in this form we find that $\ {\bf A}$ is a tridiagonal matrix and this leads us to develop a simplified algorithm for Gaussian elimination. The algorithm is implemented in C++ and we look at different size of the triadiagonal matrix such as 10, 100, and 1000. I then  compute the relative error for the different sizes and also take the time that it takes to carry out this algorithm. I compare these parameters with the LU decomposition which I use from the armadillo library and solve the linear equations with lapack. I also compare the number of floating point operations.
+We begin with the Poisson's equation in three dimensions  with a known source. After some manipulation we get it to look like a simple second order ordinary differential equation. The second derivative of the equation is approximated by the three point formula and we obtain a set of linear equations. We put them in matrix form which gives us the equation  $\ {\bf A}{\bf v} = \tilde{{\bf b}}$. By writing it in this form we find that $\ {\bf A}$ is a tridiagonal matrix and this leads us to develop a simplified algorithm for Gaussian elimination. The algorithm is implemented in C++ and we look at different sizes of the triadiagonal matrix such as 10, 100, and 1000 which correspond to the step size. I then  compute the relative error for the different sizes and record the time that it takes to carry out the algorithm. I compare these parameters with the LU decomposition which I use from the armadillo library and solve the linear equations with lapack. I also compare the number of floating point operations.
 
 
 \section{Theory}
@@ -64,7 +65,6 @@ which can be rewritten via a substitution $\Phi(r)= \phi(r)/r$ as
 \]
 The inhomogeneous term $f$ or source term is given by the charge distribution $\rho$  multiplied by $r$ and the constant $-4\pi$. We will rewrite this equation by letting $\phi\rightarrow u$ and 
 $r\rightarrow x$. The general one-dimensional Poisson equation reads then $\-u''(x) = f(x).$
-
 We then solve the one dimensional Poisson's Equation with Dirichlet boundary conditions by rewriting it as a set of linear equations.
 To be more explicit we will solve the equation
 \[
@@ -87,7 +87,6 @@ and set any of the indeces i that are greater than n to zero. These equations le
 \begin{equation}
    {\bf A}{\bf v} = \tilde{{\bf b}},
 \end{equation}
-
 where ${\bf A}$ is an $n\times n$  tridiagonal matrix which we rewrite as 
 \begin{equation}
     {\bf A} = \left(\begin{array}{ccccccc}
@@ -115,9 +114,7 @@ section and is similar to Gaussian elimination and the other is using LU decompo
 
 \subsection{Method 1: Gaussian Elimination}
 From equation (2) we set up the set of linear equations. I started by looking at a 4 by 
-4 matrix and used forward substitution and backward substitution to obtain the solutions. By 
-using looking at a 4 by 4 matrix and using forward and backward substitution I noticed a pattern
-which come from the fact that our matrix is tridiagonal. I start with a general 4 by 4 matrix 
+4 matrix and used forward substitution and backward substitution to obtain the solutions. By looking at a 4 by 4 matrix and using forward and backward substitution I noticed a pattern which comes from the fact that our matrix is tridiagonal. I start with a general 4 by 4 matrix 
 
 \begin{equation}
 \left[\begin{array}{cccc|c}
@@ -127,7 +124,7 @@ which come from the fact that our matrix is tridiagonal. I start with a general 
                            0& 0& e& d_4& b_4\\
                       \end{array} \right]
 \end{equation}
-and for simplicity set all the off diagonal terms to e since our matrix they are all equal to -1. I 
+and for simplicity set all the off diagonal terms to e since in our matrix they are all equal to -1. I 
 multiply the first row by $e/d_1$ and subtract from the second row to obtain 
 
 \begin{equation}
@@ -160,7 +157,7 @@ It's clear to see from these equations the following pattern
  	\tilde{d}_i =d_i + \frac{1}{\tilde{d}_i} \hspace{0.5cm}  \tilde{b}_i =b_i +\frac{1}{\tilde{d}_{i-1}}\tilde{b}_{i-1}
 \end{equation}
 where I have put in the value for e which is equal to -1 and changed $d_1$ to $\tilde{d}_1$ and similarly for b. From equations (7)
-and (3) I then obtain the following solutions for v which is down by backward substitution
+and (3) I then obtain the following solutions for v which is done by backward substitution
 \begin{equation}
  	v_4 =\frac{\tilde{b}_4}{\tilde{d}_4} \hspace{0.5cm} v_3 =\frac{\tilde{b}_3 -ev_4}{\tilde{d}_3} \hspace{0.5cm} 			  
 	v_2=\frac{\tilde{b}_2 -ev_3}{\tilde{d}_2} \hspace{0.5cm} v_1 =\frac{\tilde{b}_1 -ev_2}{\tilde{d}_1}
@@ -207,7 +204,7 @@ where again I put in the value for for e. In C++ I implemented the forward and b
         }//End of Loop
 \end{lstlisting}
 \begin{center}
-Figure 1: This shows sample code to calculate the forward and backward substitution.
+Listing 1: This shows sample code to calculate the forward and backward substitution.
 \end{center}
 
 These algorithms solve the equations and give the solution $v_i$. The number of floating point operations are counted by how many +, -, *, and / are in the equations. For the forward substitution there are a total of 4 and $(n-1)$ equations to solve and for the backward substitution there are $2(n-1)$. This give us a total of $6(n-1)$ floating point operations which is of the order of $\mathcal{O}(6n)$. Comparing this to the full Gaussian elimination which is given by $\frac{2}{3}n^3 +\mathcal{O}(n^2)$ [1] we see that our method is much faster. 
@@ -259,18 +256,18 @@ The function to LU decompose is called lu and the one to solve the set of equati
     colvec Y = solve(L, W);
     V = solve(U, Y);
 \end{lstlisting}     
-Figure 2: This shows a part of the code to find the LU decomposition and solve the set of equations using armadillo. 
+Listing 2: This shows a part of the code to find the LU decomposition and solve the set of equations using armadillo. 
 
 The number of floating point operations for this algorithm is given by $n^2$ iterations for forward and backward substitution and
-$\frac{2}{3}n^3$ for the LU decomposition. This gives a total of $n^2+\frac{2}{3}n^3$ which is also slower than method 1. 
+$\frac{2}{3}n^3$ for the LU decomposition. This gives a total of $n^2+\frac{2}{3}n^3$ [1] which is also slower than method 1. 
 
 \section{Results}
- I implemented the code(attached in section 8) for the simplified Gaussian elimination and obtained plots to see how accurate the estimates for the size of n=10, 100, and 1000.  To make the plots I used gnu plot. I did not make plots for the LU decomposition since they give the same values. I printed the results to 3 different data files Ten.dat, Hundred.dat, and Thousand.dat. The results of the plots are shown in figures 3, 4, and 5 for n=10, 100, and 100 respectively. I also looked at the relative error of the numerical solution with the formula 
+I implemented the code(attached in section 8) for the simplified Gaussian elimination and obtained plots to see how accurate the estimates for the size of n=10, 100, and 1000 were.  To make the plots I used gnu plot. I did not make plots for the LU decomposition since they give the same values. I printed the results to 3 different data files Ten.dat, Hundred.dat, and Thousand.dat. The results of the plots are shown in figures 1, 2, and 3 for n=10, 100, and 1000 respectively. I also looked at the relative error of the numerical solution with the formula 
 \[
    \epsilon_i=log_{10}\left(\left|\frac{v_i-u_i}
                  {u_i}\right|\right),
 \]
-I look at each point but I find that it's the same for all of them. I then compare the errors for each of the steps sizes of n. I also made a plot of $\log_{10}{\epsilon_{max}}$ vs $\log_{10}{h}$ to verify that the slope of (1) is 2 since the truncation error is $\mathcal{O}(h^2)$. This can be seen in figure 6 and I summarize these results in table 1. 
+I look at each point but I find that it's the same for all of them. I then compare the errors for each of the steps sizes of n. I also made a plot of $\log_{10}{\epsilon_{max}}$ vs $\log_{10}{h}$ to verify that the slope of (1) is 2 since the truncation error is $\mathcal{O}(h^2)$. This can be seen in figure 4 and I summarize these results in table 1. 
 \begin{figure}[H]
 \centering
 \includegraphics[width=120mm]{Ten.png}
@@ -289,7 +286,7 @@ I look at each point but I find that it's the same for all of them. I then compa
 \begin{figure}[H]
 \centering
 \includegraphics[width=120mm]{log.png}
-\caption{This shows the numerical and analytical solutions for n =1000. The results show that the numerical solution very accurate. \label{overflow}}
+\caption{This shows the relative error as a function of step size. \label{overflow}}
 \end{figure}
 
 
@@ -298,7 +295,7 @@ I look at each point but I find that it's the same for all of them. I then compa
 \label{my-label}
 \begin{tabular}{|l|l|l|}
  \cline{1-3}
- Number of grid points, n&  Log of step size, $\log_{10}(h)$ &  Log of maximal relative error, $\log_{10}(\epsilon_i)$   \\ \cline{1-3}
+ Number of grid points, n&  Log of step size, $\log_{10}(h)$ &  Relative error $\epsilon_i$   \\ \cline{1-3}
  $10^1$&  -1.0413927&    -1.1796978\\ \cline{1-3}
  $10^2$&  -2.0043214&    -3.0880368\\ \cline{1-3}
  $10^3$&  -3.0004341&     -5.0800516\\ \cline{1-3}
@@ -306,7 +303,7 @@ I look at each point but I find that it's the same for all of them. I then compa
  $10^5$&  -5.0000043&    -9.0047052\\ \cline{1-3}
  $10^6$&  -6.0000004&     -6.7713552\\ \cline{1-3}
 \end{tabular}
-\caption{My caption}
+\caption{Values of the maximum relative error with step size in log. }
 \end{table}
 
 \begin{table}[H]
@@ -322,25 +319,23 @@ I look at each point but I find that it's the same for all of them. I then compa
  $10^5$&  $3.88\times10^-4$&    3.70\\ \cline{1-3}
  $10^6$&  $3.20\times10^-2$&     --\\ \cline{1-3}
 \end{tabular}
-\caption{My caption}
+\caption{Values of the computational times.}
 \end{table}
 
 \section{Discussion}
 Method 1 worked as I expected, the results are shown in Figures 1, 2, and 3. As the step size increased(n) the value improved until 
-I go to $n=10^6$ where the relative error started to decrease as shown in Table 1. Additionally from Figure 4 I see a slope of 2 from $n=10^5-10$ which is what is expected from the three point formula with $\mathcal{O}(h^2)$.
+I go to $n=10^6$ where the relative error started to increase as shown in Table 1. Figure 1(n=10) shows that the step size underestimates the value of the solution and so this is not a good step size. Figures 2 and 3 show that the step size for 100 and 1000 respectively are better. Additionally from Figure 4 I see a slope of 2 from $n=10^5-10$ which is what is expected from the three point formula with $\mathcal{O}(h^2)$. From this figure you can also see where the approximation begins to fail which occurs after $n^5$. After this point the numerical and analytical solutions are so close together that the computer misrepresents the value of the subtraction. As the value of step size gets bigger there is a loss of precision so any step size past $n=10^5$ will deviate from the analytical. 
+
+The main result which I was after was the computational time which is given in table 2. From counting the Floating Point Operations (FLOP) I expected that method 1 would be faster than method 2. The results from table 2 confirm this. For n=10 there is a factor $10^2 $ difference and for $n=10^5$ there is a factor of $10^4$ difference. After this, step size for the LU decomposition becomes impractical since it takes up too much time and memory. I could not implement LU decomposition for $n=10^6$ since the computer gave me an error.
 
 \section{Conclusion}
-lasdjflkasjdflk;sajdf
-askdlfjas;dfkjasldkfj
-asdlkfjasdl;fkjasdl;fj
-asdfklasjdflkjasdlfj
-asdklfjasdlf;jkasdlf;kj
-asdklfjasl;dfjasd;lk
+Solving Poisson's equation with the simplified Gaussian elimination (method 1) was more efficient than with the LU decomposition method(method 2). This was seen by the amount of time it took for the calculation since both gave the same values. Method (2) becomes impractical for large step size and as shown in Table 2, method 1 still works for large numbers but it will also get to the point were the operation takes up too much memory. So by using a simplified Gaussian elimination I was able to perform very efficient calculations by simplifying the main algorithm.
+
 \section{References}
 [1] M. Hjorth-Jensen. Computational Physics, Lecture Notes Spring 2016. 
 
 \section{Code Attachment}
-\lstinputlisting{Project1.cpp}
+\lstinputlisting[language =C++]{"/home/quetzalcoatl/Computational_Physics_work/Project1/Code/Project1.cpp"}
 
 \end{document}
 
