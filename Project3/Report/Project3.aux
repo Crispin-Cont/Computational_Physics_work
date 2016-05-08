@@ -25,23 +25,71 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Earth-Sun System}{1}{subsection.2.1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Three Body Problem}{2}{subsection.2.2}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Methods}{3}{section.3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Jacobi Method}{3}{subsection.3.1}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}This shows how the Jacobi method was implemented. The rotate function is called here and it's responsible for carrying out the operation in (6).}{5}{lstlisting.1}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{5}{section.4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Single Electron}{5}{subsection.4.1}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces  Plot of the radial wavefunctions for the three lowest energies. The eigefunctions were normalized and we used $\ \rho _{max}$ = 5 and n=400.}}{6}{figure.1}}
-\newlabel{overflow}{{1}{6}{Plot of the radial wavefunctions for the three lowest energies. The eigefunctions were normalized and we used $\ \rho _{max}$ = 5 and n=400}{figure.1}{}}
-\newlabel{my-label}{{4.1}{6}{Single Electron}{figure.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces This table shows the number of grid points, the eigenvalues, Computational time, and the number of iterations. From here we can interpolate the number of similarity transformations needed to reach $\ 10^{-8}$. }}{6}{table.1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Two Interacting Electrons}{6}{subsection.4.2}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces This figure show the normalized eigenfunction for $\ \omega _r$ =0.01 and $\ \omega _r$=0.5. The values for $\ \rho _{max}$ are 60 and 8 repectively witn $\ n=400$. }}{6}{figure.2}}
-\newlabel{overflow}{{2}{6}{This figure show the normalized eigenfunction for $\ \omega _r$ =0.01 and $\ \omega _r$=0.5. The values for $\ \rho _{max}$ are 60 and 8 repectively witn $\ n=400$}{figure.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces This figure show the normalized eigenfunction for $\ \omega _r$ =1 and $\ \omega _r$=5. The values for $\ \rho _{max}$ are 8 and 2 repectively witn $\ n=400$. }}{6}{figure.3}}
-\newlabel{overflow}{{3}{6}{This figure show the normalized eigenfunction for $\ \omega _r$ =1 and $\ \omega _r$=5. The values for $\ \rho _{max}$ are 8 and 2 repectively witn $\ n=400$}{figure.3}{}}
-\newlabel{my-label}{{4.2}{7}{Two Interacting Electrons}{figure.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Values for the frequency $\ \omega _r$ and the energy eigenvalues. Also shown are the results from [2] which are the accepted values for the energies. We used these to make sure the algorithm was working correctly.}}{7}{table.2}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{7}{section.5}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{7}{section.6}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}References}{8}{section.7}}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Code Attachment}{8}{section.8}}
-\@writefile{lol}{\contentsline {lstlisting}{"/home/quetzalcoatl/Computational\textunderscore Physics\textunderscore work/Project2/Code/Project2.cpp"}{8}{lstlisting.-1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Velocity Verlet Method}{3}{subsection.3.1}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}This shows how velocity Verlet method is implemented.}{4}{lstlisting.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Runge-Kutta 4 method}{6}{subsection.3.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces  Plot of a general function and the differernt approximations taken in order to find the different slopes [1] \relax }}{8}{figure.caption.1}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{overflow}{{1}{8}{Plot of a general function and the differernt approximations taken in order to find the different slopes [1] \relax }{figure.caption.1}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}This shows how velocity RK4 method is implemented.}{8}{lstlisting.2}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{12}{section.4}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{13}{section.5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Earth Bound and Unbounded}{13}{subsection.5.1}}
+\newlabel{my-label}{{\caption@xref {my-label}{ on input line 263}}{13}{Earth Bound and Unbounded}{table.caption.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces This table gives the number of grid points used n, and the computational time. From here we see that the Velocity Verlet method is faster most of the time. \relax }}{13}{table.caption.2}}
+\newlabel{fig7:a}{{2a}{14}{Value of radius for n=200\relax }{figure.caption.3}{}}
+\newlabel{sub@fig7:a}{{a}{14}{Value of radius for n=200\relax }{figure.caption.3}{}}
+\newlabel{fig7:b}{{2b}{14}{Value of radius for n=500\relax }{figure.caption.3}{}}
+\newlabel{sub@fig7:b}{{b}{14}{Value of radius for n=500\relax }{figure.caption.3}{}}
+\newlabel{fig7:c}{{2c}{14}{Value of radius for n=1000\relax }{figure.caption.3}{}}
+\newlabel{sub@fig7:c}{{c}{14}{Value of radius for n=1000\relax }{figure.caption.3}{}}
+\newlabel{fig7:d}{{2d}{14}{Value of radius for n=2000\relax }{figure.caption.3}{}}
+\newlabel{sub@fig7:d}{{d}{14}{Value of radius for n=2000\relax }{figure.caption.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces This shows the values of the radius for different values of n. From (a) and (b) we can see that the RK4 is a bit more stable than the Velocity Verlet. But as the value of n goes up the Velocity Verlet reaches stability at about n=1000. After this the Velocity Verlet is unstable and behaves similarly to RK4. From this we can gather that the Velocity Verlet is much more accurate.\relax }}{14}{figure.caption.3}}
+\newlabel{fig7:a}{{3a}{15}{Total Energy $\ (Au/yr)^2$ for n=200\relax }{figure.caption.4}{}}
+\newlabel{sub@fig7:a}{{a}{15}{Total Energy $\ (Au/yr)^2$ for n=200\relax }{figure.caption.4}{}}
+\newlabel{fig7:b}{{3b}{15}{Total Energy $\ (Au/yr)^2$ for n=500\relax }{figure.caption.4}{}}
+\newlabel{sub@fig7:b}{{b}{15}{Total Energy $\ (Au/yr)^2$ for n=500\relax }{figure.caption.4}{}}
+\newlabel{fig7:c}{{3c}{15}{Total Energy $\ (Au/yr)^2$ for n=1000\relax }{figure.caption.4}{}}
+\newlabel{sub@fig7:c}{{c}{15}{Total Energy $\ (Au/yr)^2$ for n=1000\relax }{figure.caption.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces This shows the Values of the total energy for different values of n. Again we can clearly see that the Velocity Verlet method is more accurate.\relax }}{15}{figure.caption.4}}
+\newlabel{fig7:a}{{4a}{16}{Position of the Earth in x and y\relax }{figure.caption.5}{}}
+\newlabel{sub@fig7:a}{{a}{16}{Position of the Earth in x and y\relax }{figure.caption.5}{}}
+\newlabel{fig7:b}{{4b}{16}{Posiion of the Earth in x and y\relax }{figure.caption.5}{}}
+\newlabel{sub@fig7:b}{{b}{16}{Posiion of the Earth in x and y\relax }{figure.caption.5}{}}
+\newlabel{fig7:c}{{4c}{16}{Total Energy $\ (Au/yr)^2$ for n=5000\relax }{figure.caption.5}{}}
+\newlabel{sub@fig7:c}{{c}{16}{Total Energy $\ (Au/yr)^2$ for n=5000\relax }{figure.caption.5}{}}
+\newlabel{fig7:d}{{4d}{16}{Total Energy $\ (Au/yr)^2$ for n=5000\relax }{figure.caption.5}{}}
+\newlabel{sub@fig7:d}{{d}{16}{Total Energy $\ (Au/yr)^2$ for n=5000\relax }{figure.caption.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces (a) and (b) are plot of the x and y coordinates of the Earth when the velocity will approach the escape velocity. (c) and (d) show their respective energies. This was done with n=5000.\relax }}{16}{figure.caption.5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Earth Jupiter System}{17}{subsection.5.2}}
+\newlabel{fig7:a}{{5a}{17}{Jupiter's original mass\relax }{figure.caption.6}{}}
+\newlabel{sub@fig7:a}{{a}{17}{Jupiter's original mass\relax }{figure.caption.6}{}}
+\newlabel{fig7:b}{{5b}{17}{Jupiter with 10 the original mass\relax }{figure.caption.6}{}}
+\newlabel{sub@fig7:b}{{b}{17}{Jupiter with 10 the original mass\relax }{figure.caption.6}{}}
+\newlabel{fig7:c}{{5c}{17}{Jupiter with 1000 the original mass\relax }{figure.caption.6}{}}
+\newlabel{sub@fig7:c}{{c}{17}{Jupiter with 1000 the original mass\relax }{figure.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces This shows the position of the Earth and Jupiter with different mass values for Jupiter. From this (a) and (b) we see that that the mass of Jupiter alters Earth's orbit very little. This was done using the Verlet method at n=5000 since the RK4 was very unstable.\relax }}{17}{figure.caption.6}}
+\newlabel{fig7:a}{{6a}{18}{original mass \relax }{figure.caption.7}{}}
+\newlabel{sub@fig7:a}{{a}{18}{original mass \relax }{figure.caption.7}{}}
+\newlabel{fig7:b}{{6b}{18}{10 times the original mass\relax }{figure.caption.7}{}}
+\newlabel{sub@fig7:b}{{b}{18}{10 times the original mass\relax }{figure.caption.7}{}}
+\newlabel{fig7:c}{{6c}{18}{1000 times the original mass\relax }{figure.caption.7}{}}
+\newlabel{sub@fig7:c}{{c}{18}{1000 times the original mass\relax }{figure.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces This shows the total energy for the Earth with different values of the mass of Jupiter. From this we can see that the RK4 method is very unstable and was not used to make plots of the positions. 5000 grid point were used to get the energies.\relax }}{18}{figure.caption.7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Solar System}{18}{subsection.5.3}}
+\newlabel{fig7:a}{{7a}{19}{Full Solar System\relax }{figure.caption.8}{}}
+\newlabel{sub@fig7:a}{{a}{19}{Full Solar System\relax }{figure.caption.8}{}}
+\newlabel{fig7:b}{{7b}{19}{Inner Solar System\relax }{figure.caption.8}{}}
+\newlabel{sub@fig7:b}{{b}{19}{Inner Solar System\relax }{figure.caption.8}{}}
+\newlabel{fig7:c}{{7c}{19}{Outer Solar System\relax }{figure.caption.8}{}}
+\newlabel{sub@fig7:c}{{c}{19}{Outer Solar System\relax }{figure.caption.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces This shows the plane view of the orbits of all the planets and Pluto. To see what's really going on I included a view of the inner and outer solar system.\relax }}{19}{figure.caption.8}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{19}{section.6}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}References}{19}{section.7}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Code Attachment}{20}{section.8}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}This sets up the class for planets.}{20}{lstlisting.3}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}This gives commands for the class planets.}{20}{lstlisting.4}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}This sets up the class for the solver system which include the Velocity Verlet and RK4.}{24}{lstlisting.5}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}This gives commands for the solver system.}{25}{lstlisting.6}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}Carries out the Calculation using all the classes set up before.}{35}{lstlisting.7}}

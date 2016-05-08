@@ -3,11 +3,13 @@
 \BOOKMARK [2][-]{subsection.2.1}{Earth-Sun System}{section.2}% 3
 \BOOKMARK [2][-]{subsection.2.2}{Three Body Problem}{section.2}% 4
 \BOOKMARK [1][-]{section.3}{Methods}{}% 5
-\BOOKMARK [2][-]{subsection.3.1}{Jacobi Method}{section.3}% 6
-\BOOKMARK [1][-]{section.4}{Results}{}% 7
-\BOOKMARK [2][-]{subsection.4.1}{Single Electron}{section.4}% 8
-\BOOKMARK [2][-]{subsection.4.2}{Two Interacting Electrons}{section.4}% 9
-\BOOKMARK [1][-]{section.5}{Discussion}{}% 10
-\BOOKMARK [1][-]{section.6}{Conclusion}{}% 11
-\BOOKMARK [1][-]{section.7}{References}{}% 12
-\BOOKMARK [1][-]{section.8}{Code Attachment}{}% 13
+\BOOKMARK [2][-]{subsection.3.1}{Velocity Verlet Method}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{Runge-Kutta 4 method}{section.3}% 7
+\BOOKMARK [1][-]{section.4}{Results}{}% 8
+\BOOKMARK [1][-]{section.5}{Discussion}{}% 9
+\BOOKMARK [2][-]{subsection.5.1}{Earth Bound and Unbounded}{section.5}% 10
+\BOOKMARK [2][-]{subsection.5.2}{Earth Jupiter System}{section.5}% 11
+\BOOKMARK [2][-]{subsection.5.3}{Solar System}{section.5}% 12
+\BOOKMARK [1][-]{section.6}{Conclusion}{}% 13
+\BOOKMARK [1][-]{section.7}{References}{}% 14
+\BOOKMARK [1][-]{section.8}{Code Attachment}{}% 15

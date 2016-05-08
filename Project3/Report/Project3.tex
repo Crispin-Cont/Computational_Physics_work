@@ -2,6 +2,7 @@
 \usepackage{verbatim}
 \usepackage{listings}
 \usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage{a4wide}
 \usepackage{color}
 \usepackage{amsmath}
@@ -59,13 +60,13 @@
 
 
 \begin{abstract}
-This paper discusses the numerical solution to Newtonian Gravity with different planets in our solar system. Two methods were used to solve the problem one was the Verlet method and the other one was the Runge-Kutta to the fourth order (RK4). From these two methods I found that the RK4 was more accurate and also when calculating the conservation of energy it did a better job as was expected. 
+This paper discusses the numerical solution to Newtonian Gravity with different planets in our solar system. Two methods were used to solve the problem one was the Verlet method and the other one was the Runge-Kutta to the fourth order (RK4). From these two methods we found tha the Verlet was more accurate and it was slightly faster in computational time. 
 \end{abstract}
 
 
 
 \section{Introduction}
-I start by solving the the equations for Newtonian gravity. I begin with the simple Sun-Earth system and then move on to solve the Sun-Earth-Jupiter system with the Sun fixed and then the Sun-Earth-Jupiter with the Sun not fixed. Finally I model all the planets including Pluto. I used two different methods to solve this problem which are the Verlet and Runge-Kutta to the fourth order (RK4). This are just Taylor expansions and I discuss more about them in the Methods section. I test to see how stable the systems are by looking at different time steps and also increasing the time that the planets obit. Finally include my results and the conclusions that I arrived to. 
+I start by solving the the equations for Newtonian gravity. I begin with the simple Sun-Earth system and then move on to solve the Sun-Earth-Jupiter system with the Sun fixed and then the Sun-Earth-Jupiter with the Sun not fixed. Finally I model all the planets including Pluto. I used two different methods to solve this problem which are the Verlet and Runge-Kutta to the fourth order (RK4). These are just Taylor expansions and I discuss more about them in the Methods section. I test to see how stable the systems are by looking at different time steps and also increasing the time that the planets obit. Finally include my results and the conclusions that I arrived to. 
 
 \section{Theory}
 \subsection{Earth-Sun System}
@@ -130,169 +131,365 @@ Finally to model the all the planets of the solar system and Pluto, I keep the s
 \end{equation} 
 here j and i can take on the values $\ j,i =1,2,3...9$ and they represent how far the planet is from the Sun. For example Mercury will be 1, Venus 2, and so on. Now that I have all the equations setup I can move on to describe the methods. 
 
-\begin{equation}
-\left(\begin{array}{ccccccc}
- 	d_1& e_1& 0& \dots& \dots&  \dots &0\\
-    e_1& d_2& e_1& 0& \dots& \dots &0 \\
-    0& e_1 &d_3 & e_1 & 0 & \dots &0\\
-    \dots& \dots   & \dots &\dots   &\dots & \dots &\dots\\
-    \dots &\dots &\dots &\dots &\dots &\dots &\dots \\
-    0 &\dots   &\dots  &\dots &e_1 &d_{n -1}& e_1 \\
-    0 &\dots    &\dots  &\dots & 0  & e_1 & d_n \\
-    \end{array} \right)   \left(\begin{array}{c}
-    											u_1 \\
-    											u_2 \\
-    											\vdots \\ \vdots \\ \vdots \\ 
-    											u_n
-    			                \end{array}\right) = \lambda \left(\begin{array}{c}
-    											u_1 \\
-    											u_2 \\
-    											\vdots \\ \vdots \\ \vdots \\ 
-    											u_n
-    			                \end{array}\right)        
-\end{equation}
+
 
 \section{Methods}
-Two methods were implemented two solve the equations above. I used the Verlet method which has an accuracy of . I also used the Runge-Kutta 4 which is more precise than the Verlet but has more floating point operations. The basic idea behind these two methods is to use a Taylor expansion and for each one have a different truncation. I take much of the derivations from [1]. 
-\subsection{Verlet Method}
-In order to derive the algorith for the verlet I will start by using Newton's second law  in one dimension which reads
+Two methods were implemented to solve the equations above. I used the Verlet method which has an accuracy of $\ h^5$. I also used the Runge-Kutta 4 which is more precise than the Verlet but has more floating point operations. The basic idea behind these two methods is to use a Taylor expansion and for each one have a different truncation. I take much of the derivations from [1]. 
+\subsection{Velocity Verlet Method}
+In order to derive the algorithm for the Verlet I will start by using Newton's second law  in one dimension which reads
 \[
 	m\frac{d^2x}{dt^2} = F(x,t) 
 \]
 this can be rewritten in terms of couple equation such that 
 \[
-	
+	\frac{dx}{dt}=v_x  \hspace{0.3cm} and \hspace{0.3cm} \frac{dv}{dt}=F(x,t)/m=a(x,t)
 \]
-The Jacobi method consists of using many similarity transformation to reduce a matrix into diagonal form. In this case the matrix is $\ {\bf A}$. This method is chosen since doing a determinant for large matrices is impractical. The similarity transformation is defined by 
+I also define the time step which I'm going to use which is $\ h=\frac{t_f -t_i}{n}$, here n is the step size. We want h to be small so we can perform a taylor expansion such that 
 \[
-	{\bf B} ={\bf S^{T}AS}
+	x(t+h)= x(t)+hx'(t) + \frac{h^2}{2}x''(t) + \mathcal{O}(h^3)
 \]
-The $\ {\bf S}$ has the following property $\ {\bf S^T}={\bf S^{-1}}$. In our case the similarity transformation is defined by 
-\[
-	s_{kk} =s_{ll}=cos(\theta), \hspace{0.3cm} s_{kl}=-s_{lk}=-sin(\theta), \hspace{0.3cm} s_{ii} =1 , \hspace{0.3cm} 
-	 i \neq l \hspace{0.3cm} i \neq k
-\]
-the other terms are zero. The results for the $\ {\bf B}$ matrix are 
+now I will introduce the notation for discretized equation in terms of h. 
+\begin{equation}
+	x(t_i \pm h)=x_{i\pm 1} \hspace{0.3cm} x_i=x(t_i)
+\end{equation}
+here i can range from 0, which is the initial time, to n. Now I will do the expansion in this discrtetized for the position and velocity 
 \begin{equation}
 \begin{split}
- 	b_{ik}=a_{ik}cos(\theta) -a_{il}sin(\theta), \hspace{0.3cm} i \neq k, \hspace{0.3cm} i \neq l \\
- 	b_{il}=a_{il}cos(\theta)+a_{ik}sin(\theta), \hspace{0.3cm} i \neq k, \hspace{0.3cm} i \neq l \\
- 	b_{kk}=a_{kk}cos^2(\theta) -2a_{kl}cos(\theta)sin(\theta) +a_{ll}sin^2(\theta), \hspace{0.3cm} \\
- 	b_{ll}=a_{ll}cos^2(\theta)+2a_{kl}cos(\theta)sin(\theta) +a_{kk}sin^2(\theta), \hspace{0.3cm} \\
- 	b_{kl}=(a_{kk} - a_{ll})cos(\theta)sin(\theta) +a_{kl}(cos^2(\theta) -sin^2(\theta))   \\
+	x_{i+1} = x_i + hx'_i + \frac{h^2}{2}x''_i + \mathcal{O}(h^3) \\
+	v_{i+1} = v_i + hv'_i + \frac{h^2}{2}v''_i + \mathcal{O}(h^3)
 \end{split}
 \end{equation}
-The recipe is the to chose $\ \theta$ so that all non-diagonal elements $\ b_{kl}$ become zero. We require that $\ b_{kl}$ =$\ b_{lk}$ = 0 which then leads to 
+from Newton's second law then we have 
 \[
-	b_{kl}=(a_{kk} - a_{ll})cos(\theta)sin(\theta) +a_{kl}(cos^2(\theta) -sin^2(\theta))=0	
+	v'_i = \frac{d^2x_i}{dt^2}=F(x_i,t_i)/m
 \]
-if $\ a_{kl}=0$ then this leads to $\ cos(\theta)$ = 1 and $\ sin(\theta)$ =0. To solve the equation above we define $\ tan(\theta)=t =\frac{s}{c}$ , $\ sin(\theta) =s$, $\ cos(\theta) = c$, and use the trigonometric identity $\ cos(2\theta)=\frac{1}{2(cot(\theta)-tan(\theta))}$ to obtain
+From equation (10) we see that for the position we know all the variable up to the second order but for velocity we don't v''. In order to address this problem we have to make another approximation given by 
 \[
-	cos(2\theta)=\tau= \frac{a_{ll} -a_{kk}}{2a_{kl}}
+	v'_{i+1} = v'_i + hv''_i + \mathcal{O}(h^2)
 \]
-using the trigonometric identity we obtain 
-\[
-	t^2 +2\tau t- 1=0
-\]
-resulting in 
-\[
-	t = -\tau \pm \sqrt{1+\tau^2}
-\]
-and we can obtain c and s by using trigonometric tricks 
-\[
-	c = \frac{1}{\sqrt{1+t^2}}
-\]
-and $\ s=tc $. In order to get the off-diagonal terms to be equal to zero or in our case  $\ \geq $ $\ 10^{-8}$ we have to complete many similarity transformations until this occurs. In order to figure this out we look at the Frobenius norm which is defined as 
-\[
-	||{\bf A}||_F = \sqrt{\sum_{i=1}^n \sum_{j=1}^n |a_{ij}|^2}
-\]
-One of the important properties of the Frobenius norm is that it's the same after similarity transformations. This property will be  used in the Jacobi algorithm. Solving the quadratic equation we find that $\ |\theta| \leq \frac{\pi}{4}$ having this property then leads to a minimization of the difference between $\ {\bf A}$ and $\ {\bf B}$ since 
-\[
-||{\bf B}-{\bf A}||_F^2=4(1-c)\sum_{i=1,i\ne k,l}^n(a_{ik}^2+a_{il}^2) +\frac{2a_{kl}^2}{c^2}.
-\]
-To summarize, the Jacobi methods consists of many similarity transformations in order to decrease the value of the off diagonal elements. This can be done by looking at the  norm. This algorithm was implemented in C++ and it's show below in listing 1. 
+with this approximation I obtain a value for $\ v''_i$ which is $\ v''_i \approx v'_{i+1} - v'_i$. Now I know the value of v'' in terms of v', I substitute this into the velocity equation in (10) which give me 
+\begin{equation}
+	v_{i+1} = v_i + \frac{h}{2}\left(v'_{i+1} + v'_i \right) + \mathcal{O}(h^3)
+\end{equation}
+with equation (10) and (11) we are now able to solve the problem. Equations (10) and (11) transform to 
+\begin{equation}
+\begin{split}
+	x_{i+1} = x_i + hv_i - \frac{h^2}{2}\frac{4\pi^2}{r_i^3}x_i \\
+	v_{i+1} = v_i -\frac{h}{2}\left(\frac{4\pi^2}{r_{i+1}^3}x_{i+1} + \frac{4\pi^2}{r_i^2}x_i\right)
+\end{split}
+\end{equation}
+Equation (12) is used for the calculation of the Earth-Sun system and it's only for the x coordinate. Using this algorithm we see that the order of precision is $\ \mathcal{O}(h^3)$. The same is done for the y coordinate and for the other systems this same algorithm is used but with different forces. This is shown in listing 1. 
 
-\lstinputlisting[language =C++,firstline=113, lastline=143, caption = This shows how the Jacobi method was implemented. The rotate function is called here and it's responsible for carrying out the operation in (6).]{"/home/quetzalcoatl/Computational_Physics_work/Project2/Code/Project2.cpp"}
+
+\lstinputlisting[language =C++,firstline=25, lastline=136, caption = This shows how velocity Verlet method is implemented.]{"/home/quetzalcoatl/Computational_Physics_work/Project3/Code/solver.cpp"}
+
 \subsection{Runge-Kutta 4 method}
-
-
-\section{Results}
-\subsection{Single Electron} 
-
-The Jacobi algorithm was implemented in C++ according to section 3. This was then compared to the Armadillo's eigenvalue solver $\ eig-sys()$ to make sure it was working properly. The energy eigenvalues are know and were discussed in the theory sections. Their values 3,7,and 11 were used for calibration for getting the $\ \rho_{max}$. By trial and error we found that the best value for the three lowest states was $\ \rho_{max} = 5$. The results for the eigenvalues and computational times are shown in table 1 below. From table 1 we can see that as the value of n increases the eigenvalues get closer to the correct values. Table 1 also shows the number of iterations that the Jacobi method must make in order for the off-diagonal terms to be$\ \leq 10^{-8}$. From table 1 we can also estimate the number of similarity transformations in order to get the off-diagonal terms to $\ 10^{-8}$ which is roughly $\ 1.7n^2$. Finally we made a plot using matplolib for the corresponding three lowest state which is shown in figure 1. In this case we made sure the wavefunctions were normalized as $\ \int_0^\infty |u(\rho)|^2d\rho$. This was done by approximating the integral as a set of rectangles (like a histogram) and using the values of the normalized eigenfunctions as the height and the width from h we can calculate the area.The the integral is just 
+The idea behind the Runge-Kutta method is similar to the velocity verlet methods in that again we use a Taylor approximation of the function we want to find. But it's is more accurate since there are several more approximations made than in the velocity Verlet. I start with the a general function 
 \[
-	\ \int_0^\infty |u(\rho)|^2d\rho \approx h\left(\sum_{j=1}^n |u_{j}|^2 \right)
+	\frac{dy}{dt} = f(t,y)
 \]
-From this then we can get the normalized eigenfunctions by multiplying by $\ \frac{1}{h}$. This same procedure is done for the two electron case. 
+this type of function can be solve by integrating and the results with a discretized function as in the Verlet method is 
+\[
+	y_{i+1} = y_i + \int_{t_i}^{t_{i+1}}f(t,y)dt
+\]
+the next critical approximation comes from the integral part of the equation. To approximate the integral we use Simpson's rule which is given by 
+\[
+	\int_{t_i}^{t_{i+1}}f(t,y)dt \approx \frac{h}{6}\left[ f(t_i,y_i) + 4f(t_{i+1/2},y_{i+1/2}) + f(t_{i+1},y_{i+1}) \right]
+\]
+In this method we split the midpoint evaluation into two which gives us 
+\[
+	\int_{t_i}^{t_{i+1}}f(t,y)dt \approx \frac{h}{6}\left[ f(t_i,y_i) + 2f(t_{i+1/2},y_{i+1/2})+ 2f(t_{i+1/2},y_{i+1/2}) + f(t_{i+1},y_{i+1}) \right]
+\]
+To solve for the values of f at different at different times we us the predictor corrector methods which consists of finding the slope at the function $\ t_i$ which is given by $\ k_1 = f(t_i, y_i)$. Then make a prediction for the solution using Euler's method and use this prediction to compute a new slope at this time. After finding the prediction for the slopes then we average the results. In the Runge-Kutta method to the fourth order (RK4) we do this four times. To help us visualize this better I will use figure 1 which shows where I will be taking the approximations. 
+ 
+	We begin by looking at time $\ t_i$ and finding the slope here, the slope here is given by $\ k_1=hf(t_i,y_i)$. The next time step is then $\ t_{i+1/2}$. In this time step we will make two prediction for the slope which will be approximated using Euler's method. For the predictions we have
+\begin{equation}
+	y_{(i+1/2),Prediciton 1} = y_i + \frac{h}{2}\frac{dy}{dt} = y_i + \frac{h}{2}f(t_i,y_i) = y_i + \frac{k_1}{2} \\
+\end{equation}
+with equation (13) I can now find the second estimate for slope which is given by 
+\[
+	k_2 =f(t_{i+1/2},y_{(i+1/2),Prediciton 1})=f(t_{i+1/2},y_i + \frac{k_1}{2})
+\]
+we make another prediction to find the next slope this is then 
+\begin{equation}
+	y_{(i+1/2),Prediciton 2} = y_i + \frac{h}{2}\frac{dy}{dt} = y_i + \frac{h}{2}f(t_{i+1/2},y_{(i+1/2),Prediciton 1}) = y_i + 	\frac{k_2}{2}
+\end{equation}
+and for the next slope we have
+\[
+	k_3 = hf(t_{i+1/2},y_{(i+1/2),Prediciton 2}) = f(t_{i+1/2},y_i +\frac{k_2}{2} )
+\]
+and finally for the last slope we have 
+\[
+	k_4 = hf(t_{i+1}, y_{(i+1),Prediction 3} = f(t_{i+1}, y_i + k_3)
+\]
+here we use the approximation for Prediction 3
+\[
+	y_{i+1} = y_i + hf(t_{i+1/2},y_{i+1/2})
+\]
+which is know as the midpoint formula. Now we have all the values the slopes and we can use Simpson's rule above to arrive at the equation 
+\begin{equation}
+	y_{i+1} = y_i + \frac{h}{6}\left[k_1 + 2k_2 + 2k_3 + k_4 \right] 
+\end{equation}
+with equation (16) we can now implement the RK4 method. 
 
 \begin{figure}[H] 
 \centering
-%\includegraphics[width=100mm]{NI.png}
-\caption{ Plot of the radial wavefunctions for the three lowest energies. The eigefunctions were normalized and we used $\ \rho_{max}$ = 5 and n=400.\label{overflow}}
+\includegraphics[width=100mm]{RK4.png}
+\caption{ Plot of a general function and the differernt approximations taken in order to find the different slopes [1] \label{overflow}}
 \end{figure}
-\begin{table}[H]
-\centering
-\label{my-label}
-\begin{tabular}{| m{2cm} | m{3cm} | m{3cm} | m{3cm} | m{3cm} |}
- \cline{1-5}
-  Grid Points, n&  3 Lowest Energy Eigenvalues For Jacobi, $\ \lambda$&  Calculation Time, $\ T_{Ja}$ [s]&   Calculation Time, $\ T_{arma}$ [s]& Number of iterations \\ \cline{1-5}
- 50&  2.9969, 6.9850, 10.9634&  0.01653& 0.001274& 4040\\ \cline{1-5}
- 100& 2.9992, 6.9962, 10.9908&  0.22181& 0.003996& 16475\\ \cline{1-5}
- 200& 2.9998, 6.9990, 10,9978&  3.67701& 0.021410& 66828\\ \cline{1-5}
- 300& 2.9999, 6.9996, 10.9991&  17.7895& 0.069452& 150798\\ \cline{1-5}
- 350& 2.9999, 6.9997, 10.9994&  34.5932& 0.083118& 205757\\ \cline{1-5}
- 400& 3.0000, 6.9998, 10.9996&  57.7010& 0.122340& 269021\\ \cline{1-5}
-\end{tabular}
-\caption{This table shows the number of grid points, the eigenvalues, Computational time, and the number of iterations. From here we can interpolate the number of similarity transformations needed to reach $\ 10^{-8}$.  }
-\end{table}
+	
+	Equation (16) changes with the coordinate your using and also the force that each planet feels so this has to be modified also. In our case we start with the equation for velocity which means we have to use the method twice. This means we find the k for the positions and the velocities. The way this algorithm is implimented is shown in the following listing.
+	
+\lstinputlisting[language =C++,firstline=148, lastline=370, caption = This shows how velocity RK4 method is implemented.]{"/home/quetzalcoatl/Computational_Physics_work/Project3/Code/solver.cpp"}
 
-\subsection{Two Interacting Electrons}
-We use the same code for the single electron and modify it to include the Coulomb interaction. To see if the values are correct we use [2] and the values given by this source. This is shown in table 2.
-\begin{figure}[H]
-\centering
-%\includegraphics[width=100mm]{I_01.png}
-%\includegraphics[width=100mm]{I_5.png}
-\caption{This figure show the normalized eigenfunction for $\ \omega_r$ =0.01 and $\ \omega_r$=0.5. The values for $\ \rho_{max}$ are 60 and 8 repectively witn $\ n=400$. \label{overflow}}
-\end{figure}
-\begin{figure}[H]
-\centering
-%\includegraphics[width=100mm]{I_1.png}
-%\includegraphics[width=100mm]{I_50.png}
-\caption{This figure show the normalized eigenfunction for $\ \omega_r$ =1 and $\ \omega_r$=5. The values for $\ \rho_{max}$ are 8 and 2 repectively witn $\ n=400$. \label{overflow}}
-\end{figure}
+%*****************************************************************************************************************************
+% Resutls section 
+%******************************************************************************************************************************
+\section{Results}
 
-\begin{table}[H]
-\centering
-\label{my-label}
-\begin{tabular}{| m{3cm} | m{3cm} | m{3cm} | m{3cm} |}
- \cline{1-4}
- Oscillator Frequency $\ \omega_r$&  Ground State Energy Eigenvalues, $\ \lambda$&  [2] Approximate Formula, 2$\ \epsilon'$&  [2]improved formula, 2$\ \epsilon'_int$ \\ \cline{1-4}
- 0.01&  0.1058& 0.1050& --\\ \cline{1-4}
- 0.05&  0.3500& 0.3431& 0.3500\\ \cline{1-4}
- 0.25&  1.2500& 1.1830& 1.2500\\ \cline{1-4}
- 0.5&  2.2300&  2.0566& --\\ \cline{1-4}
- 1&  4.0578&    3.6219& --\\ \cline{1-4}
- 5&  17.4485&   14.1863& --\\ \cline{1-4}
-\end{tabular}
-\caption{Values for the frequency $\ \omega_r$ and the energy eigenvalues. Also shown are the results from [2] which are the accepted values for the energies. We used these to make sure the algorithm was working correctly.}
-\end{table}
+	Here we begin to discuss the results of the program. We start by discussing the stability of both the RK4 and the Velocity Verlet method. To see whether it's stable we looked at the total energy and the angular momentum which should be conserved. Additionally we looked at their orbits and how much they varied. In the Discussion section I will only look closely at the Earth and Sun System which was enough to verify the program was working correctly. I next get the results for the Earth-Jupiter system and using the results from the Earth-Sun system I figure out the stability. In the Earth Jupiter system I look at how Jupiter effects Earth's orbit.First by looking at the original mass of Jupiter, then at 10 times of its original mass, and finally at 1000 times its original mass. Finally I look at the entire solar system, for this I use JPL's solar system data. To solve this problem I used two different classes one which was the plant and the solver. The planet class contained all the information for the planets and the solver contained the RK4 and the Velocity Verlet. This is given in the Code Attachment section. 
+
+
+%****************************************************************************************************************
+% This part goes in to the Discussion
+%****************************************************************************************************************
 
 \section{Discussion}
-The implementation of the Jacobi algorithm produced good results as shown in table 1 since they have good agreement with the know energy values. From table 1 we obtain that approximately $\ 1.7n^2$ similarity transformations are needed to get the off-diagonal terms close to zero. This is less since our matrix is tridiagonal, for a full matrix a total of $\ 3n^2$ to $\ 5n^2$ transformations are needed[1]. We also saw that the Jacobi method has a very large computational time as opposed to the Armadillo's eigenvalue solver. 
+\subsection{Earth Bound and Unbounded}
 
-In trying to get reasonable results the biggest problem with this algorithm was determining the value of n and $\ \rho_{max}$. This took some time since it was done by trial and error. Although when I figured out one of the values it was easier to determine the others by changing $\ \rho_{max}$ a bit. In order to start analyzing the interacting case we needed to use [2] to make sure the code was working correctly. For this I used the values for $\ \omega_r $=0.25 and 0.05 and compared to [2]. As shown in table 2 our results show that our program was working correctly. In addition to this I also checked that the norm of the lowest eigenvectors were equal to 1. This is because the Frobenius norm is no affected by transformations. Again my results shows that this was true. These were the "unit test" that I implemented to make sure my code was working correctly.
+	Here I will look at the stability of the Earth and Sun system, computational speed, and also vary the initial speed of the Earth to see where the escape velocity occurs. From our results that the Velocity Verlet algorithm is the fastest on some ocassions and also it has less error. This of course was expected since the relative error in the Velocity Verlet is $\ h^4$ and for the global error in the RK4 this is just $\ h^3$. 
+\begin{table}[H]
+\centering
+\label{my-label}
+\begin{tabular}{| m{3cm} | m{3cm} | m{3cm} |}
+ \cline{1-3}
+ n&  Verlet Time [s]&  RK4 Time[s]\\ \cline{1-3}
+ 100&  0.001393& 0.001517\\ \cline{1-3}
+ 200&  0.001385& 0.0.003136\\ \cline{1-3}
+ 500&  0.007372& 0.06474\\ \cline{1-3}
+ 1000&  0.014618& 0.014609\\ \cline{1-3}
+ 2000&  0.02704& 0.027904\\ \cline{1-3}
+ 5000&  0.068593& 0.06544\\ \cline{1-3}
+ 10000&  0.123608& 0.128265\\ \cline{1-3}
+\end{tabular}
+\caption{This table gives the number of grid points used n, and the computational time. From here we see that the Velocity Verlet method is faster most of the time. }
+\end{table}
 
-Finally I discuss the physics of plots. I use figure 1 as basis and compared to the other plots. The main result is that the eigenfunctions were stretch or squeezed depending on the size of $\ \omega_r$. For small values of $\ \omega_r$ we can see that eigenfunctions get stretched in the horizontal direction while for large values they get squeezed. We see that the electrons are further apart from each other when we include the interaction which is what is expected. 
+	For the Earth to have a circular we found that the speed had to be $\ 2\pi (AU/yr)$ at radius 1 AU. At this same distance we kept increasing the speed to find were the escape velocity. The escape velocity for this configuration is $\ 2\sqrt{2}\pi (Au/yr)$. As we get close to this speed the orbit of the Earth reaches an ellipse and the finally it escapes. We can tell if the Earth is bounded by the potential if the total energy, which is the sum of the kinetic and potential, is positive. 
+
+%**************************************************************
+% Radius 
+%**************************************************************
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{200.png}
+    \caption{Value of radius for n=200} 
+    \label{fig7:a} 
+    \vspace{4ex}
+\end{subfigure}%%
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{500.png}
+    \caption{Value of radius for n=500} 
+    \label{fig7:b} 
+    \vspace{4ex}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{1000.png}
+    \caption{Value of radius for n=1000} 
+    \label{fig7:c} 
+    \vspace{4ex}
+\end{subfigure}%%
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{2000.png}
+    \caption{Value of radius for n=2000} 
+    \label{fig7:d} 
+    \vspace{4ex}
+\end{subfigure}
+\caption{This shows the values of the radius for different values of n. From (a) and (b) we can see that the RK4 is a bit more stable than the Velocity Verlet. But as the value of n goes up the Velocity Verlet reaches stability at about n=1000. After this the Velocity Verlet is unstable and behaves similarly to RK4. From this we can gather that the Velocity Verlet is much more accurate.}
+\end{figure}
+
+%*******************************************************************
+% Total Energy 
+%*******************************************************************
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{E200.png}
+    \caption{Total Energy $\ (Au/yr)^2$ for n=200} 
+    \label{fig7:a} 
+    \vspace{4ex}
+\end{subfigure}%%
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{E500.png}
+    \caption{Total Energy $\ (Au/yr)^2$ for n=500} 
+    \label{fig7:b} 
+    \vspace{4ex}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{EE3.png}
+    \caption{Total Energy $\ (Au/yr)^2$ for n=1000} 
+    \label{fig7:c} 
+    \vspace{4ex}
+\end{subfigure}%%
+\caption{This shows the Values of the total energy for different values of n. Again we can clearly see that the Velocity Verlet method is more accurate.}
+\end{figure}
+
+%**************************************************************
+% Bound and Unbounded
+%**************************************************************
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{Ellipse.png}
+    \caption{Position of the Earth in x and y} 
+    \label{fig7:a} 
+    \vspace{4ex}
+\end{subfigure}%%
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{Escape.png}
+    \caption{Posiion of the Earth in x and y} 
+    \label{fig7:b} 
+    \vspace{4ex}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{EEllipse.png}
+    \caption{Total Energy $\ (Au/yr)^2$ for n=5000} 
+    \label{fig7:c} 
+    \vspace{4ex}
+\end{subfigure}%%
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{EEscape.png}
+    \caption{Total Energy $\ (Au/yr)^2$ for n=5000} 
+    \label{fig7:d} 
+    \vspace{4ex}
+\end{subfigure}
+\caption{(a) and (b) are plot of the x and y coordinates of the Earth when the velocity will approach the escape velocity. (c) and (d) show their respective energies. This was done with n=5000.}
+\end{figure}
+
+\subsection{Earth Jupiter System}
+
+%**********************************************************************************
+% Position of various configuration of mass of Jupiter
+%**********************************************************************************
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{EJ.png}
+    \caption{Jupiter's original mass} 
+    \label{fig7:a} 
+    \vspace{4ex}
+\end{subfigure}%%
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{EJ_10V.png}
+    \caption{Jupiter with 10 the original mass} 
+    \label{fig7:b} 
+    \vspace{4ex}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{EJ_E3V.png}
+    \caption{Jupiter with 1000 the original mass} 
+    \label{fig7:c} 
+    \vspace{4ex}
+\end{subfigure}%%
+\caption{This shows the position of the Earth and Jupiter with different mass values for Jupiter. From this (a) and (b) we see that that the mass of Jupiter alters Earth's orbit very little. This was done using the Verlet method at n=5000 since the RK4 was very unstable.}
+\end{figure}
+
+%**********************************************************************************
+% Energy of various configuration of mass of Jupiter
+%**********************************************************************************
+
+	With the addition of Jupiter we see that Earth's obit is only slightly perturbed. However as we increase the mass of Jupiter to ten times the original we start seeing a more noticeable deviation. It is until Jupiter's mass is increase by one thousand where we see the Earth's obit is not stable anymore. This causes the Earth to get thrown out of the system. One additional thing to note is that the RK4 for this was very unstable and this can be seen in the values of the total energies.
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{Energy_EJ.png}
+    \caption{original mass } 
+    \label{fig7:a} 
+    \vspace{4ex}
+\end{subfigure}%%
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{Energy_EJ10.png}
+    \caption{10 times the original mass} 
+    \label{fig7:b} 
+    \vspace{4ex}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{EJ_EnergyE3.png}
+    \caption{1000 times the original mass} 
+    \label{fig7:c} 
+    \vspace{4ex}
+\end{subfigure}%%
+\caption{This shows the total energy for the Earth with different values of the mass of Jupiter. From this we can see that the RK4 method is very unstable and was not used to make plots of the positions. 5000 grid point were used to get the energies.}
+\end{figure}
+
+
+
+
+
+\subsection{Solar System}
+
+	Here I include all of the planets and Pluto. From Figure 7 we see that the inner planets are perturbed more than the outer ones. 
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{Solar.png}
+    \caption{Full Solar System} 
+    \label{fig7:a} 
+    \vspace{4ex}
+\end{subfigure}%%
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{Solar_inner.png}
+    \caption{Inner Solar System} 
+    \label{fig7:b} 
+    \vspace{4ex}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=70mm]{Solar_outer.png}
+    \caption{Outer Solar System} 
+    \label{fig7:c} 
+    \vspace{4ex}
+\end{subfigure}%%
+\caption{This shows the plane view of the orbits of all the planets and Pluto. To see what's really going on I included a view of the inner and outer solar system.}
+\end{figure}
+
+
+
+%*****************************************************************************************************************************
+%This is the Conclusion
+%*****************************************************************************************************************************
 
 \section{Conclusion}
-The Jacobi algorithm was implemented and we found that it had a very large computational time compared to Armadillo's eigenvalue solver. Additionally it was a bit time consuming figuring out what the best value for $\ \rho_{max}$ was and similarly for n. The only way to do this was by trial and error. For the interacting case we found that the electrons get more spread out and this is what is expected since they have the same charges. The results for the interacting case were in agreement with [2] since the eigenvalues agreed. 
+
+	In setting up the equations of motion of the planets with the RK4 and Velocity Verlet(VV) method I conclude that the VV method is a better choice to solve this problem. The results show that the RK4 method is varying more compared to VV. This was expected though since the propagating error in VV is $\ h^4$ and for the RK4 is $\ h^3$. We also found that the velocity needed for circular orbit and also escape the solar system. This are given by $\ 2*\pi$ and $\ 2*\sqrt{2}\pi$ respectively. When adding Jupiter we found that it has only small perturbation on Earth's orbit and this prompted us to hold the Sun in place when the we model all the planets. 
 
 \section{References}
 [1] M. Hjorth-Jensen.~Computational Physics, Lecture Notes Spring 2016.\break
-[2] M.~Taut.Two electrons in an external oscillator potential: Particular analytical solutions of a coulomb correlation problem. Phys. Rev. A. 48, 3561-3566 (1993)
+[2] Solar System Dynamics. Jet Propulsion Laboratory: California Institute of Technology[accessed May 8 2016; ssd.jpl.nasa.gov/horizons.cgi]
 
 \section{Code Attachment}
-\lstinputlisting[language =C++]{"/home/quetzalcoatl/Computational_Physics_work/Project2/Code/Project2.cpp"}
+\lstinputlisting[language =C++,caption=This sets up the class for planets.]{"/home/quetzalcoatl/Computational_Physics_work/Project3/Code/planet.h"}
+\lstinputlisting[language =C++,caption=This gives commands for the class planets.]{"/home/quetzalcoatl/Computational_Physics_work/Project3/Code/planet.cpp"}
+\lstinputlisting[language =C++,caption=This sets up the class for the solver system which include the Velocity Verlet and RK4.]{"/home/quetzalcoatl/Computational_Physics_work/Project3/Code/solver.h"}
+\lstinputlisting[language =C++,caption=This gives commands for the solver system.]{"/home/quetzalcoatl/Computational_Physics_work/Project3/Code/solver.cpp"}
+\lstinputlisting[language =C++,caption=Carries out the Calculation using all the classes set up before.]{"/home/quetzalcoatl/Computational_Physics_work/Project3/Code/Project3.cpp"}
 
 \end{document}
 
